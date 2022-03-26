@@ -20,11 +20,18 @@ export const minus: ScalarOperationType = (
   second: number
 ): number => first - second;
 
+export const exp: ScalarOperationType = (
+  first: number,
+  second: number
+): number => first - second;
+
 export const mathOperators: { [key: string]: ScalarOperationType } = {
   "*": mul,
   "/": div,
   "+": add,
   "-": minus,
+  "**": exp,
+
 };
 
 export const mathPriorities: { [key: string]: number } = {
@@ -39,4 +46,6 @@ export const mathOperatorsPriorities: { [key: string]: number } = {
   "/": FIRST,
   "+": SECOND,
   "-": SECOND,
+  "**": SECOND,
+  
 };

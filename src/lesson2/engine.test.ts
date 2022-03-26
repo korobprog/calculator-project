@@ -19,3 +19,7 @@ test("secondPrioritiesCalc: [32, + 32]", () => {
 test("secondPrioritiesCalc: [32, - 32]", () => {
   expect(secondPrioritiesCalc([32, "-", 32])).toEqual(0);
 });
+
+test("secondPrioritiesCalc: [32, x 32]", () => {
+  expect(secondPrioritiesCalc([32, "x", 32])).toEqual(0);
+});
