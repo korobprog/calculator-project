@@ -6,17 +6,17 @@ import {
   mathOperatorsPriorities,
 } from "./mathOperators";
 
-const { FIRST, SECOND } = mathPriorities;
+const [FIRST, SECOND] = mathPriorities;
 
-export const firstPrioritiesCalc = (stack: ParsedLineType): ParsedLineType => {
-  let result: ParsedLineType = [];
-
-  for (let key = 0; key < stack.length; key++) {
+export const firstPrioritiesCalc = (stack: ParsedLineType): ParsedLineType =>
+  stack.reduce<ParsedLineType>((result, nextItem) => {
     const prevItem = result[result.length - 2];
     const item = result[result.length - 1];
-    const nextItem = stack[key];
 
     if (!isNumber(String(item)) && mathOperatorsPriorities[item] === FIRST) {
+      if (!mathOperators[item]) {
+        throw new TypeError("Unexpected stack!");
+      }
       result = [
         ...result.slice(0, -2),
         mathOperators[item](Number(prevItem), Number(nextItem)),
@@ -24,25 +24,19 @@ export const firstPrioritiesCalc = (stack: ParsedLineType): ParsedLineType => {
     } else {
       result.push(nextItem);
     }
-  }
+    return result;
+  }, []);
 
-  return result;
-};
-
-export const secondPrioritiesCalc = (stack: ParsedLineType): number => {
-  let result = 0;
-  for (let key = 0; key < stack.length; key++) {
-    if (key === 0) {
-      result = Number(stack[key]);
-    }
-
-    const prevItem = result;
+export const secondPrioritiesCalc = (stack: ParsedLineType): number =>
+  stack.reduce<number>((result, nextItem, key) => {
     const item = stack[key - 1];
-    const nextItem = stack[key];
+
+    if (mathOperatorsPriorities[item] === FIRST) {
+      throw new TypeError("Unexpected stack!");
+    }
 
     if (!isNumber(String(item)) && mathOperatorsPriorities[item] === SECOND) {
-      result = mathOperators[item](Number(prevItem), Number(nextItem));
+      result = mathOperators[item](Number(result), Number(nextItem));
     }
-  }
-  return result;
-};
+    return result;
+  }, Number(stack[0]));
